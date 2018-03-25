@@ -1,10 +1,14 @@
 package Pc.Graphics;
 
+import Pc.Graphics.SystemsMessages.Connecting;
+import Pc.Graphics.SystemsMessages.NewOrOpenChoreography;
+import Pc.Logic.Java.Communication.PythonInterface;
+import Pc.Logic.Java.Objects.Choreoghraphy;
+import Pc.Logic.Java.Objects.Step;
+
 import javax.swing.*;
-import javax.swing.event.ChangeListener;
 import java.awt.*;
-import java.awt.event.ItemEvent;
-import java.awt.event.ItemListener;
+import java.io.IOException;
 import java.util.ArrayList;
 
 /**
@@ -12,15 +16,12 @@ import java.util.ArrayList;
  */
 public class Handeling extends JFrame{
 
-    private JPanel hlavniPanel;
+    public JPanel mainPanelm;
     private JPanel panelSNastroji;
     private JPanel ovladaciPanel;
 
-    private JButton prima;
-    private JButton zpetna;
-
-    private JProgressBar progressBar1;
-
+    private JButton forward;
+    private JButton inverse;
 
     private JSlider slider1;
     private JSlider slider2;
@@ -37,11 +38,12 @@ public class Handeling extends JFrame{
     private JLabel hodnota6;
     private JRadioButton realtime;
     private JRadioButton krokove;
-    //TODO: Nastavit lambda výrazy pro buttony
-    private JButton button1;
-    private JButton choreography;
-    private JButton button2;
-    private JComboBox comboBox1;
+
+    private JButton choreoghraphyButton;
+    private JButton step;
+    private JComboBox arduinoPorts;
+    private JButton bacStep;
+    private JButton nexStep;
     //ZapisDoSouboru zapisDoSouboru;
 
     ArrayList<Object> list;
@@ -61,32 +63,43 @@ public class Handeling extends JFrame{
     private int nova6;
 
 
+    private PythonInterface pythonInterface;
+
+    private Forward forwardFrame;
+    private int indexOfActualStep;
+
+    private Choreoghraphy choreoghraphy;
+    private Step actualStep;
+
     public Handeling(){
+        indexOfActualStep = 0;
         this.setDefaultCloseOperation(EXIT_ON_CLOSE);
         this.setSize(new Dimension(700, 500));
-        this.add(hlavniPanel);
-        this.setTitle("Bakalářka");
+        this.add(mainPanelm);
+        this.setTitle("Arexx RA1-PRO Controller");
 
-//        hodnota1.setText("0");
+        hodnota1.setText("0");
         hodnota2.setText("0");
         hodnota3.setText("0");
         hodnota4.setText("0");
         hodnota5.setText("0");
         hodnota6.setText("0");
 
-        slider1.setMinimum(-100);
-        slider2.setMinimum(-100);
-        slider3.setMinimum(-100);
-        slider4.setMinimum(-100);
-        slider5.setMinimum(-100);
-        slider6.setMinimum(-100);
+        //callPython = new CallPython();
 
-        slider1.setMaximum(100);
-        slider2.setMaximum(100);
-        slider3.setMaximum(100);
-        slider4.setMaximum(100);
-        slider5.setMaximum(100);
-        slider6.setMaximum(100);
+        slider1.setMinimum(0);
+        slider2.setMinimum(0);
+        slider3.setMinimum(0);
+        slider4.setMinimum(0);
+        slider5.setMinimum(0);
+        slider6.setMinimum(0);
+
+        slider1.setMaximum(180);
+        slider2.setMaximum(180);
+        slider3.setMaximum(180);
+        slider4.setMaximum(180);
+        slider5.setMaximum(180);
+        slider6.setMaximum(180);
 
         slider1.setValue(0);
         slider2.setValue(0);
@@ -102,12 +115,6 @@ public class Handeling extends JFrame{
         stara5 = 0;
         stara6 = 0;
 
-        vytvorListenery();
-        //this.setResizable(false);
-
-        //progressBar1.setMinimum(0);
-        //progressBar1.setMaximum(100);
-
         list = new ArrayList<>();
 
         list.add(slider1);
@@ -116,74 +123,140 @@ public class Handeling extends JFrame{
         list.add(slider4);
         list.add(slider5);
         list.add(slider6);
-
-        //odesilani = new Odesilani();
-        //prijimani = new Prijimani();
-
-        //ovladani = this;
-        choreography.addActionListener(e -> {
-
+        this.pythonInterface = new PythonInterface();
+        forward.addActionListener(e -> {
+            if (forwardFrame == null) {
+                forwardFrame = new Forward(this);
+            } else {
+                forwardFrame.setVisible(true);
+                this.setVisible(false);
+            }
         });
+        choreoghraphyButton.addActionListener(e -> {new NewOrOpenChoreography();});
+        inverse.addActionListener(e -> {});
 
         realtime.setSelected(true);
 
         this.setVisible(true);
-    }
-
-    private void vytvorListenery(){
-        ChangeListener changeListener = e -> {
-            for (int i = 0; i < list.size(); i++) {
-                if(e.getSource().equals(list.get(i))){
-                    switch (i){
-                        case 0:
-                            hodnota1.setText(String.valueOf(slider1.getValue()));
-                            break;
-                        case 1:
-                            hodnota2.setText(String.valueOf(slider2.getValue()));
-                            break;
-                        case 2:
-                            hodnota3.setText(String.valueOf(slider3.getValue()));
-                            break;
-                        case 3:
-                            hodnota4.setText(String.valueOf(slider4.getValue()));
-                            break;
-                        case 4:
-                            hodnota5.setText(String.valueOf(slider5.getValue()));
-                            progressBar1.setValue(slider5.getValue());
-                            progressBar1.setString(String.valueOf(slider5.getValue())+"%");
-                            break;
-                        case 5:
-                            hodnota6.setText(String.valueOf(slider6.getValue()));
-                            break;
-                    }
-                }
+        ArrayList<String> portsPath = PythonInterface.findPorts();
+        for (int i = 0; i < portsPath.size(); i++) {
+            arduinoPorts.addItem(portsPath.get(i));
+        }
+        arduinoPorts.addActionListener(e -> {
+            System.out.println("nlihkliugzkugugukz");
+            new Connecting();
+            this.setVisible(false);
+            System.out.println();
+            this.setVisible(true);
+            try {
+                pythonInterface.openPort(arduinoPorts.getSelectedItem().toString());
+            } catch (InterruptedException exc) {
+                exc.printStackTrace();
             }
-        };
-        //
-        slider1.addChangeListener(e -> hodnota1.setText(String.valueOf(slider1.getValue())));
-        slider2.addChangeListener(e -> hodnota2.setText(String.valueOf(slider2.getValue())));
-        slider3.addChangeListener(e -> hodnota3.setText(String.valueOf(slider3.getValue())));
-        slider4.addChangeListener(e -> hodnota4.setText(String.valueOf(slider4.getValue())));
-        slider5.addChangeListener(e -> hodnota5.setText(String.valueOf(slider5.getValue())));
-        slider6.addChangeListener(e -> hodnota6.setText(String.valueOf(slider6.getValue())));
-
-        ItemListener itemListener = new ItemListener() {
-            @Override
-            public void itemStateChanged(ItemEvent e) {
-                if(e.getItem().equals(realtime)&&realtime.isSelected()){
-                    krokove.setSelected(false);
-                }else if(e.getItem().equals(krokove)&&krokove.isSelected()){
-                    realtime.setSelected(false);
-                }
+        });
+        this.pythonInterface = new PythonInterface();
+        slider1.addChangeListener(e -> {
+            hodnota1.setText(String.valueOf(slider1.getValue()));
+            String[] dat = {"1000", hodnota1.getText()};
+            try {
+                pythonInterface.sendData(dat);
+            } catch (IOException e1) {
+                e1.printStackTrace();
+            } catch (InterruptedException e1) {
+                e1.printStackTrace();
             }
-        };
-        //
-        //TODO:Vyřešit stavbu lambda výrazu
-        //realtime.addItemListener(e -> e.getItem().equals(realtime)&&krokove.isSelected()?krokove.setSelected(false):realtime.setSelected(false));
-        //
-        //krokove.addItemListener(e -> e.getItem().equals(krokove)&&krokove.isSelected()?realtime.setSelected(false):);
+        });
+        slider2.addChangeListener(e -> {
+            hodnota2.setText(String.valueOf(slider2.getValue()));
+            String[] dat = {"2000", hodnota2.getText()};
+            try {
+                pythonInterface.sendData(dat);
+            } catch (IOException e1) {
+                e1.printStackTrace();
+            } catch (InterruptedException e1) {
+                e1.printStackTrace();
+            }
+        });
+        slider3.addChangeListener(e -> {
+            hodnota3.setText(String.valueOf(slider3.getValue()));
+            String[] dat = {"3000", hodnota3.getText()};
+            try {
+                pythonInterface.sendData(dat);
+            } catch (IOException e1) {
+                e1.printStackTrace();
+            } catch (InterruptedException e1) {
+                e1.printStackTrace();
+            }
+        });
+        slider4.addChangeListener(e -> {
+            hodnota4.setText(String.valueOf(slider4.getValue()));
+            String[] dat = {"4000", hodnota4.getText()};
+            try {
+                pythonInterface.sendData(dat);
+            } catch (IOException e1) {
+                e1.printStackTrace();
+            } catch (InterruptedException e1) {
+                e1.printStackTrace();
+            }
+        });
+        slider5.addChangeListener(e -> {
+            hodnota5.setText(String.valueOf(slider5.getValue()));
+            String[] dat = {"5000", hodnota5.getText()};
+            try {
+                pythonInterface.sendData(dat);
+            } catch (IOException e1) {
+                e1.printStackTrace();
+            } catch (InterruptedException e1) {
+                e1.printStackTrace();
+            }
+        });
+        slider6.addChangeListener(e -> {
+            hodnota6.setText(String.valueOf(slider6.getValue()));
+            String[] dat = {"6000", hodnota6.getText()};
+            try {
+                pythonInterface.sendData(dat);
+            } catch (IOException e1) {
+                e1.printStackTrace();
+            } catch (InterruptedException e1) {
+                e1.printStackTrace();
+            }
+        });
 
+        realtime.addItemListener(e -> {
+            if(e.getItem().equals(realtime)&&realtime.isSelected()){
+                krokove.setSelected(false);
+            }
+        });
+        //
+        krokove.addItemListener(e -> {
+            if(e.getItem().equals(krokove)&&krokove.isSelected()){
+                realtime.setSelected(false);
+            }
+        });
 
+        bacStep.addActionListener(e -> {
+            if (choreoghraphy != null && indexOfActualStep !=0){
+                indexOfActualStep -= 1;
+                actualStep = choreoghraphy.getChoreography().get(indexOfActualStep);
+            }
+        });
+
+        step.addActionListener(e -> {
+            try {
+                pythonInterface.sendData(actualStep);
+            } catch (IOException e1) {
+                e1.printStackTrace();
+            } catch (InterruptedException e1) {
+                e1.printStackTrace();
+            }
+        });
+
+        nexStep.addActionListener(e -> {
+            if (choreoghraphy != null && indexOfActualStep != choreoghraphy.getChoreography().size()){
+                indexOfActualStep += 1;
+                actualStep = choreoghraphy.getChoreography().get(indexOfActualStep);
+            }
+        });
     }
 
     private int[] ulozeniStavuPosuvniku(){
@@ -196,9 +269,7 @@ public class Handeling extends JFrame{
         stavyPosuvniku[5] = slider1.getValue();
         return stavyPosuvniku;
     }
-    private boolean realtimeVybrano(){
-        return realtime.isSelected();
-    }
+
 /**
     public ZapisDoSouboru getZapisDoSouboru() {
         if(zapisDoSouboru == null){
