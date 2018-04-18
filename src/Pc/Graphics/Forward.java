@@ -2,15 +2,15 @@ package Pc.Graphics;
 
 import Pc.Graphics.SystemsMessages.OutOfWorkSpace;
 import Pc.Graphics.SystemsMessages.WrongAngle;
-import Pc.Logic.Java.Calculations.ForwardKinematics;
-import Pc.Logic.Java.Communication.Communicator;
+import Pc.Logic.Java.Services.Calculations.ForwardKinematics;
+import Pc.Logic.Java.Services.Communication.Communicator;
 import Pc.Logic.Java.Objects.Servo;
 import Pc.Logic.Java.Objects.Step;
+import Pc.Logic.Java.Services.AnlesTransformation;
 
 import javax.swing.*;
 import java.awt.*;
 import java.awt.event.ActionEvent;
-import java.io.IOException;
 
 /**
  * Created by stepanmudra on 11.07.17.
@@ -33,19 +33,17 @@ public class Forward extends JFrame{
     private Forward forward;
     private WrongAngle wrongAngle;
     private Communicator communicator;
-    int angle1;
-    int angle2;
-    int angle3;
-    int angle4;
-    int angle5;
-    int angle6;
+    private int[]angles;
+    private boolean err = false;
 
     public Forward(Handeling handeling, Communicator pythonInterface){
         this.communicator = pythonInterface;
         handeling.setVisible(false);
         this.setVisible(true);
         this.setSize(new Dimension(500, 150));
+        this.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         this.forward = this;
+        this.angles = new int[6];
         forward.add(panel);
         back.addActionListener(e -> {
             this.setVisible(false);
@@ -55,41 +53,36 @@ public class Forward extends JFrame{
         count.addActionListener((ActionEvent e) -> {
             nullValuesControl();
             try {
-                angle1 = Integer.parseInt(motor1.getText());
-                angle2 = Integer.parseInt(motor2.getText());
-                angle3 = Integer.parseInt(motor3.getText());
-                angle4 = Integer.parseInt(motor4.getText());
-                angle5 = Integer.parseInt(motor5.getText());
-                angle6 = Integer.parseInt(motor6.getText());
+                angles[0] = Integer.parseInt(motor1.getText());
+                angles[1] = Integer.parseInt(motor2.getText());
+                angles[2] = Integer.parseInt(motor3.getText());
+                angles[3] = Integer.parseInt(motor4.getText());
+                angles[4] = Integer.parseInt(motor5.getText());
+                angles[5] = Integer.parseInt(motor6.getText());
             }catch (NumberFormatException exc){
                 if(wrongAngle == null){
                     wrongAngle = new WrongAngle();
+                    wrongAngle.setVisible(true);
                 }else {
                     wrongAngle.setVisible(true);
                 }
+                err = true;
             }
-            int[]angles = new int[6];
-            angles[0] = angle1;
-            angles[1] = angle2;
-            angles[2] = angle3;
-            angles[3] = angle4;
-            angles[4] = angle5;
-            angles[5] = angle6;
-            for (int i = 0; i < 5; i++) {
-                if (0>angles[i]||angles[i]>180){
-                    if(wrongAngle == null){
-                        wrongAngle = new WrongAngle();
-                    }else {
-                        wrongAngle.setVisible(true);
-                    }
-                    return;
-                }
+            chceckAngles();
+            double[] coordinates = ForwardKinematics.calculateFK(transformAngles());
+            boolean outWS = !workSpaceControl(coordinates);
+            if(outWS){
+                err = true;
             }
-            double[] coordinates = ForwardKinematics.calculateFK(angles);
-            workSpaceControl(coordinates);
-            this.x.setText(String.valueOf(coordinates[0]));
-            this.y.setText(String.valueOf(coordinates[1]));
-            this.z.setText(String.valueOf(coordinates[1]));
+            if(!err) {
+                this.x.setText(String.valueOf(coordinates[0]));
+                this.y.setText(String.valueOf(coordinates[1]));
+                this.z.setText(String.valueOf(coordinates[1]));
+            }else {
+                this.x.setText("error");
+                this.y.setText("error");
+                this.z.setText("error");
+            }
         });
         save.addActionListener(e -> {
             nullValuesControl();
@@ -98,23 +91,40 @@ public class Forward extends JFrame{
             sendStep(step);
         });
     }
-    private void workSpaceControl(double[] coordinates){
+
+    private void chceckAngles() {
+        for (int i = 0; i < 5; i++) {
+            if (0>angles[i]||angles[i]>180){
+                if(wrongAngle == null){
+                    wrongAngle = new WrongAngle();
+                }else {
+                    wrongAngle.setVisible(true);
+                }
+                err = true;
+                return;
+            }
+        }
+    }
+
+    private boolean workSpaceControl(double[] coordinates){
         boolean xOutOfWorkSpace = -10.5<coordinates[0] && coordinates[0]<10.5;
         boolean yOutOfWorkSpace = -10.5<coordinates[1] && coordinates[1]<10.5;
         boolean zOutOfWorkSpace = -6<coordinates[2] && coordinates[2]<0;
         if((xOutOfWorkSpace && yOutOfWorkSpace && zOutOfWorkSpace) || coordinates[2] <= -6){
             this.save.disable();
             new OutOfWorkSpace();
+            return false;
         }
         this.save.enable();
+        return true;
     }
     private void createStep(Step step){
-        step.addMove(new Servo(0, angle1));
-        step.addMove(new Servo(1, angle2));
-        step.addMove(new Servo(2, angle3));
-        step.addMove(new Servo(3, angle4));
-        step.addMove(new Servo(4, angle5));
-        step.addMove(new Servo(5, angle6));
+        step.addMove(new Servo(0, angles[0]));
+        step.addMove(new Servo(1, angles[1]));
+        step.addMove(new Servo(2, angles[2]));
+        step.addMove(new Servo(3, angles[3]));
+        step.addMove(new Servo(4, angles[4]));
+        step.addMove(new Servo(5, angles[5]));
     }
     private void nullValuesControl() {
         if (motor1.getText() == null && nullWrongAngle()) {
@@ -144,12 +154,16 @@ public class Forward extends JFrame{
         }
     }
     private void sendStep(Step step) {
-        try {
             communicator.sendData(step);
-        } catch (IOException e) {
-            e.printStackTrace();
-        } catch (InterruptedException e) {
-            e.printStackTrace();
-        }
+    }
+    private int[] transformAngles(){
+        int[] anglesTransform = new int[6];
+        anglesTransform[0] = AnlesTransformation.gles(180, angles[0]);
+        anglesTransform[1] = AnlesTransformation.gles(180, angles[1]);
+        anglesTransform[2] = AnlesTransformation.gles(180, angles[2]);
+        anglesTransform[3] = AnlesTransformation.gles(180, angles[3]);
+        anglesTransform[4] = AnlesTransformation.gles(0, angles[4]);
+        anglesTransform[5] = AnlesTransformation.gles(0, angles[5]);
+        return anglesTransform;
     }
 }

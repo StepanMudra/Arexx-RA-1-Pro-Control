@@ -1,15 +1,15 @@
 package Pc.Graphics.SystemsMessages;
 
 import javax.swing.*;
+import java.awt.*;
 
-public class Connecting extends JFrame {
-    private JPanel contentPane;
-    private JProgressBar progressBar1;
-    private JButton buttonOK;
+public class Connecting extends JDialog {
+    private JPanel pane;
+    private JLabel con;
 
     public Connecting() {
-        setContentPane(contentPane);
-        getRootPane().setDefaultButton(buttonOK);
+        this.setSize(new Dimension(300, 300));
+        setModal(true);
         setVisible(true);
     }
 }

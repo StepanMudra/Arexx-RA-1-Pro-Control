@@ -2,8 +2,8 @@ package Pc.Graphics;
 
 import Pc.Graphics.SystemsMessages.ChoreographyNaming;
 import Pc.Graphics.SystemsMessages.Connecting;
-import Pc.Logic.Java.Communication.Communicator;
-import Pc.Logic.Java.FileWorker;
+import Pc.Logic.Java.Services.Communication.Communicator;
+import Pc.Logic.Java.Services.FileWorker;
 import Pc.Logic.Java.Objects.Choreography;
 import Pc.Logic.Java.Objects.Servo;
 import Pc.Logic.Java.Objects.Step;
@@ -19,7 +19,7 @@ import java.util.ArrayList;
  */
 public class Handeling extends JFrame {
 
-    public JPanel mainPanelm;
+    public JPanel mainPanel;
     private JPanel panelSNastroji;
     private JPanel ovladaciPanel;
 
@@ -98,7 +98,7 @@ public class Handeling extends JFrame {
         indexOfActualStep = 0;
         this.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         this.setSize(new Dimension(700, 400));
-        this.add(mainPanelm);
+        this.add(mainPanel);
         this.setTitle("Arexx RA1-PRO Controller");
         this.setAutoRequestFocus(false);
         this.setFocusable(true);
@@ -196,7 +196,7 @@ public class Handeling extends JFrame {
         System.out.println(krokove.isSelected());
         return krokove.isSelected();
     }
-    public boolean isPortOpened() {
+    private boolean isPortOpened() {
         return portOpened;
     }
 
@@ -361,13 +361,17 @@ public class Handeling extends JFrame {
     }
     private void comboBoxListeners(){
         arduinoPorts.addActionListener(e -> {
-            System.out.println("nlihkliugzkugugukz");
             //new Connecting();
             //this.setVisible(false);
             System.out.println();
             //this.setVisible(true);
             try {
+                if(connecting == null){
+                    connecting = new Connecting();
+                }
+                connecting.setVisible(true);
                 portOpened = communicator.openPort(arduinoPorts.getSelectedItem().toString());
+                connecting.setVisible(false);
             } catch (InterruptedException exc) {
                 exc.printStackTrace();
             }

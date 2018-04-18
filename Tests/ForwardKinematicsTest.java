@@ -1,4 +1,4 @@
-import Pc.Logic.Java.Calculations.ForwardKinematics;
+import Pc.Logic.Java.Services.Calculations.ForwardKinematics;
 import org.junit.Test;
 
 import static junit.framework.TestCase.assertTrue;

@@ -1,7 +1,7 @@
 package Pc.Graphics.SystemsMessages;
 
 import Pc.Graphics.Handeling;
-import Pc.Logic.Java.FileWorker;
+import Pc.Logic.Java.Services.FileWorker;
 import Pc.Logic.Java.Objects.Choreography;
 
 import javax.swing.*;
@@ -28,14 +28,13 @@ public class ChoreographyNaming extends JFrame {
         this.setSize(new Dimension(500,130));
         this.fileWorker = fileWorker;
         buttonOK.addActionListener(e -> {
-            String dir = "Choreography/";
             String path = "Choreography/"+textField1.getText()+".bin";
             if(!new File(path).exists()) {
                 fileWorker.saveChoreography(choreography, path);
             }else {
                 message.setText("File with this name is exist. Pick diffierent name please or rewrite.");
                 revriteButton.addActionListener(e1 -> {
-                    fileWorker.saveChoreography(choreography, dir);
+                    fileWorker.saveChoreography(choreography, path);
                 });
             }
         });
@@ -44,6 +43,7 @@ public class ChoreographyNaming extends JFrame {
     public ChoreographyNaming(FileWorker fileWorker, Handeling handeling){
         this.setTitle("Open choreography");
         this.setContentPane(contentPanel);
+        this.setSize(new Dimension(500,130));
         this.getRootPane().setDefaultButton(buttonOK);
         this.fileWorker = fileWorker;
         buttonOK.addActionListener(e -> {

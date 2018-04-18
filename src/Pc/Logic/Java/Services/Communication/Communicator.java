@@ -1,4 +1,4 @@
-package Pc.Logic.Java.Communication;
+package Pc.Logic.Java.Services.Communication;
 
 import Pc.Logic.Java.Objects.Choreography;
 import Pc.Logic.Java.Objects.Step;
@@ -76,12 +76,9 @@ public class Communicator {
         PrintWriter writer = new PrintWriter(this.serialPort.getOutputStream());
 
         System.out.println("m "+data[0]+" "+data[1]);
+        System.out.println(serialPort.isOpen());
         writer.println("m "+data[0]+" "+data[1]);
         writer.flush();
-    }
-    public void recievData() throws IOException {
-        InputStream inputStream = serialPort.getInputStream();
-        System.out.println(inputStream.read());
     }
 }
 

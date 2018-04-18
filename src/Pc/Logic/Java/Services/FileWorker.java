@@ -1,4 +1,4 @@
-package Pc.Logic.Java;
+package Pc.Logic.Java.Services;
 
 import Pc.Logic.Java.Objects.Choreography;
 import Pc.Logic.Java.Objects.Servo;
@@ -10,13 +10,13 @@ import java.util.ArrayList;
 public class FileWorker {
 
     /**
-     * Method, which can create a new file for you choreography
-     * @param choreography
-     * @param dir
+     * Method which can create a new file for you choreography.
+     * @param choreography Your choreography to save.
+     * @param path Path with name of the choreography.
      */
-    public void saveChoreography(Choreography choreography, String dir){
+    public void saveChoreography(Choreography choreography, String path){
         try {
-            FileOutputStream fileOut = new FileOutputStream(dir);
+            FileOutputStream fileOut = new FileOutputStream(path);
 
             ObjectOutputStream out = new ObjectOutputStream(fileOut);
             out.writeObject(choreography);
@@ -29,9 +29,9 @@ public class FileWorker {
     }
 
     /**
-     *
-     * @param name
-     * @return
+     * Method which serve as a loader of your choreography.
+     * @param name Name of your choreography.
+     * @return choreography Loaded choreography.
      */
     public Choreography loadChoreography(String name){
 
@@ -41,7 +41,11 @@ public class FileWorker {
             FileInputStream fileIn = new FileInputStream("choreography/"+name+".bin");
             ObjectInputStream in = new ObjectInputStream(fileIn);
 
-            choreography = (Choreography) in.readObject();
+            try {
+                choreography = (Choreography) in.readObject();
+            } catch (ClassNotFoundException e) {
+                e.printStackTrace();
+            }
             in.close();
             fileIn.close();
 
@@ -50,8 +54,6 @@ public class FileWorker {
             System.out.println("Make new choreography.");
         } catch (IOException e) {
             e.printStackTrace();
-        } catch (ClassNotFoundException c) {
-            c.printStackTrace();
         }
         return choreography;
     }

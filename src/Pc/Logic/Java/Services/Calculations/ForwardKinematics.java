@@ -1,4 +1,4 @@
-package Pc.Logic.Java.Calculations;
+package Pc.Logic.Java.Services.Calculations;
 
 public class ForwardKinematics {
 
@@ -12,10 +12,7 @@ public class ForwardKinematics {
         double x = Math.cos(servo1Rad)*(14.5*Math.cos(servo2Rad + servo3Rad + servo4Rad) + 8 * Math.cos(servo2Rad + servo3Rad) + 8 * Math.cos(servo2Rad));
         double y = Math.sin(servo1Rad)*(14.5*Math.cos(servo2Rad + servo3Rad + servo4Rad) + 8 * Math.cos(servo2Rad + servo3Rad) + 8 * Math.cos(servo2Rad));
         double z = -14.5*Math.sin(servo2Rad + servo3Rad + servo4Rad)-8*Math.sin(servo2Rad + servo3Rad)-8*Math.sin(servo2Rad)+3.5;
-        double[]coordinates = new double[3];
-        coordinates[0]=x;
-        coordinates[1]=y;
-        coordinates[2]=z;
+        double[]coordinates = {x, y, z};
         return coordinates;
     }
 
@@ -23,8 +20,8 @@ public class ForwardKinematics {
     public static void main(String[] args) {
         int[] angles = {
                 0,
+                270,
                 0,
-                90,
                 0,
                 0,
                 0
