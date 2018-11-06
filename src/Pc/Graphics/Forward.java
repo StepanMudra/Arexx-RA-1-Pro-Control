@@ -2,11 +2,12 @@ package Pc.Graphics;
 
 import Pc.Graphics.SystemsMessages.OutOfWorkSpace;
 import Pc.Graphics.SystemsMessages.WrongAngle;
-import Pc.Logic.Java.Services.Calculations.ForwardKinematics;
-import Pc.Logic.Java.Services.Communication.Communicator;
-import Pc.Logic.Java.Objects.Servo;
-import Pc.Logic.Java.Objects.Step;
-import Pc.Logic.Java.Services.AnlesTransformation;
+import Pc.Logic.Services.Calculations.ForwardKinematics;
+import Pc.Logic.Services.Communication.Communicator;
+import Pc.Logic.Objects.Servo;
+import Pc.Logic.Objects.Step;
+import Pc.Logic.Services.AnlesTransformation;
+import Pc.Logic.Services.Controller;
 
 import javax.swing.*;
 import java.awt.*;
@@ -35,8 +36,9 @@ public class Forward extends JFrame{
     private Communicator communicator;
     private int[]angles;
     private boolean err = false;
+    private Controller controller;
 
-    public Forward(Handeling handeling, Communicator pythonInterface){
+    public Forward(Handeling handeling, Communicator pythonInterface, Controller controller){
         this.communicator = pythonInterface;
         handeling.setVisible(false);
         this.setVisible(true);
@@ -44,6 +46,7 @@ public class Forward extends JFrame{
         this.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         this.forward = this;
         this.angles = new int[6];
+        this.controller = controller;
         forward.add(panel);
         back.addActionListener(e -> {
             this.setVisible(false);
@@ -68,9 +71,9 @@ public class Forward extends JFrame{
                 }
                 err = true;
             }
-            chceckAngles();
+             err = controller.chceckAngles(wrongAngle, angles, err);
             double[] coordinates = ForwardKinematics.calculateFK(transformAngles());
-            boolean outWS = !workSpaceControl(coordinates);
+            boolean outWS = !controller.workSpaceControl(coordinates, this);
             if(outWS){
                 err = true;
             }
@@ -106,16 +109,16 @@ public class Forward extends JFrame{
         }
     }
 
-    private boolean workSpaceControl(double[] coordinates){
+    private boolean workSpaceControl(double[] coordinates, Forward forward){
         boolean xOutOfWorkSpace = -10.5<coordinates[0] && coordinates[0]<10.5;
         boolean yOutOfWorkSpace = -10.5<coordinates[1] && coordinates[1]<10.5;
         boolean zOutOfWorkSpace = -6<coordinates[2] && coordinates[2]<0;
         if((xOutOfWorkSpace && yOutOfWorkSpace && zOutOfWorkSpace) || coordinates[2] <= -6){
-            this.save.disable();
+            forward.save.disable();
             new OutOfWorkSpace();
             return false;
         }
-        this.save.enable();
+        forward.save.enable();
         return true;
     }
     private void createStep(Step step){
@@ -129,20 +132,15 @@ public class Forward extends JFrame{
     private void nullValuesControl() {
         if (motor1.getText() == null && nullWrongAngle()) {
             wrongAngle = new WrongAngle();
-        }
-        if (motor2.getText() == null && nullWrongAngle()) {
+        }else if (motor2.getText() == null && nullWrongAngle()) {
             wrongAngle = new WrongAngle();
-        }
-        if (motor3.getText() == null && nullWrongAngle()) {
+        } else if (motor3.getText() == null && nullWrongAngle()) {
             wrongAngle = new WrongAngle();
-        }
-        if (motor4.getText() == null && nullWrongAngle()) {
+        } else if (motor4.getText() == null && nullWrongAngle()) {
             wrongAngle = new WrongAngle();
-        }
-        if (motor5.getText() == null && nullWrongAngle()) {
+        } else if (motor5.getText() == null && nullWrongAngle()) {
             wrongAngle = new WrongAngle();
-        }
-        if (motor6.getText() == null && nullWrongAngle()) {
+        }else if (motor6.getText() == null && nullWrongAngle()) {
             wrongAngle = new WrongAngle();
         }
     }
@@ -165,5 +163,8 @@ public class Forward extends JFrame{
         anglesTransform[4] = AnlesTransformation.gles(0, angles[4]);
         anglesTransform[5] = AnlesTransformation.gles(0, angles[5]);
         return anglesTransform;
+    }
+    public JButton getSave() {
+        return save;
     }
 }
