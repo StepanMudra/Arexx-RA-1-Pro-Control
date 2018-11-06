@@ -1,4 +1,4 @@
-package Pc.Logic.Java.Objects;
+package Pc.Logic.Objects;
 
 import java.io.Serializable;
 import java.util.ArrayList;
@@ -15,5 +15,15 @@ public class Step implements Serializable{
     public Servo getMove(int index){return servos.get(index);}
     public void addMove(Servo servo){
         servos.add(servo);
+    }
+    public boolean equals(Step step){
+        if(
+                getMoves().equals(step.getMoves())
+
+        ){
+            return true;
+        } else {
+            return false;
+        }
     }
 }

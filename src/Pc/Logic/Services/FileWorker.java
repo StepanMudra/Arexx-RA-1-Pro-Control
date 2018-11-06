@@ -1,8 +1,6 @@
-package Pc.Logic.Java.Services;
+package Pc.Logic.Services;
 
-import Pc.Logic.Java.Objects.Choreography;
-import Pc.Logic.Java.Objects.Servo;
-import Pc.Logic.Java.Objects.Step;
+import Pc.Logic.Objects.*;
 
 import java.io.*;
 import java.util.ArrayList;
@@ -27,6 +25,38 @@ public class FileWorker {
             e.printStackTrace();
         }
     }
+    public Possibilities loadMoznosti(){
+        Possibilities possibilities = null;
+        try {
+            FileInputStream fileIn = new FileInputStream("possibilities.bin");
+            ObjectInputStream in = new ObjectInputStream(fileIn);
+            try {
+                possibilities = (Possibilities) in.readObject();
+            } catch (IOException e) {
+                e.printStackTrace();
+            } catch (ClassNotFoundException e) {
+                e.printStackTrace();
+            }
+        } catch (FileNotFoundException e) {
+            e.printStackTrace();
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+        return possibilities;
+    }
+    public void saveMoznosti(Possibilities possibilities){
+        try {
+            FileOutputStream fileOut = new FileOutputStream("possibilities.bin");
+
+            ObjectOutputStream out = new ObjectOutputStream(fileOut);
+            out.writeObject(possibilities);
+            out.close();
+            fileOut.close();
+
+        } catch (IOException e) {
+            e.printStackTrace();
+        }
+    }
 
     /**
      * Method which serve as a loader of your choreography.
@@ -38,12 +68,13 @@ public class FileWorker {
         Choreography choreography = null;
 
         try {
-            FileInputStream fileIn = new FileInputStream("choreography/"+name+".bin");
+            FileInputStream fileIn = new FileInputStream("Choreography/"+name+".bin");
             ObjectInputStream in = new ObjectInputStream(fileIn);
 
             try {
                 choreography = (Choreography) in.readObject();
             } catch (ClassNotFoundException e) {
+                System.out.println("oungvriuabegiuvb");
                 e.printStackTrace();
             }
             in.close();

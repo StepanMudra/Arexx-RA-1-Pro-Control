@@ -1,4 +1,4 @@
-package Pc.Logic.Java.Objects;
+package Pc.Logic.Objects;
 
 import java.io.Serializable;
 

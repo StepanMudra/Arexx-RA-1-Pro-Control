@@ -1,7 +1,7 @@
-package Pc.Logic.Java.Services.Communication;
+package Pc.Logic.Services.Communication;
 
-import Pc.Logic.Java.Objects.Choreography;
-import Pc.Logic.Java.Objects.Step;
+import Pc.Logic.Objects.Choreography;
+import Pc.Logic.Objects.Step;
 import com.fazecast.jSerialComm.SerialPort;
 
 import java.io.*;
@@ -45,8 +45,8 @@ public class Communicator {
     }
 
     public void sendData(Choreography choreography, int waitingTime){
-        for (int i = 0; i < choreography.getChoreography().size(); i++) {
-            Step step = choreography.getChoreography().get(i);
+        for (int i = 0; i < choreography.getSteps().size(); i++) {
+            Step step = choreography.getSteps().get(i);
 
             sendData(step);
             try {

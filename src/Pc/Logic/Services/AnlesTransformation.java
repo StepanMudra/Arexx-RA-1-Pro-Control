@@ -1,4 +1,4 @@
-package Pc.Logic.Java.Services;
+package Pc.Logic.Services;
 
 public class AnlesTransformation {
     public static int gles(int koeficient, int gle){
