@@ -110,13 +110,13 @@
                       <foreground color="-14869219"/>
                       <hideActionText value="false"/>
                       <text value="New ghoreography"/>
-                      <toolTipText value="Use when you opening/creating choreography"/>
+                      <toolTipText value="Use when you opening/creating steps"/>
                     </properties>
                   </component>
                   <component id="cca6f" class="javax.swing.JButton" binding="openChoreography">
                     <constraints/>
                     <properties>
-                      <text value="Open choreography"/>
+                      <text value="Open steps"/>
                     </properties>
                   </component>
                 </children>
@@ -364,13 +364,13 @@
               <component id="6acc8" class="javax.swing.JButton" binding="addStepToNewButton" default-binding="true">
                 <constraints/>
                 <properties>
-                  <text value="Add step to new choreography"/>
+                  <text value="Add step to new steps"/>
                 </properties>
               </component>
               <component id="ddc11" class="javax.swing.JButton" binding="saveStep">
                 <constraints/>
                 <properties>
-                  <text value="Add step to actual choreography"/>
+                  <text value="Add step to actual steps"/>
                 </properties>
               </component>
               <hspacer id="9884a">
@@ -438,7 +438,7 @@
               <component id="2d065" class="javax.swing.JButton" binding="choreographySenda">
                 <constraints/>
                 <properties>
-                  <text value="Send actual choreography"/>
+                  <text value="Send actual steps"/>
                 </properties>
               </component>
             </children>

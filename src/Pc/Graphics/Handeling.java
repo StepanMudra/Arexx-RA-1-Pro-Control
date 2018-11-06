@@ -2,11 +2,12 @@ package Pc.Graphics;
 
 import Pc.Graphics.SystemsMessages.ChoreographyNaming;
 import Pc.Graphics.SystemsMessages.Connecting;
-import Pc.Logic.Java.Services.Communication.Communicator;
-import Pc.Logic.Java.Services.FileWorker;
-import Pc.Logic.Java.Objects.Choreography;
-import Pc.Logic.Java.Objects.Servo;
-import Pc.Logic.Java.Objects.Step;
+import Pc.Logic.Services.Communication.Communicator;
+import Pc.Logic.Services.Controller;
+import Pc.Logic.Services.FileWorker;
+import Pc.Logic.Objects.Choreography;
+import Pc.Logic.Objects.Servo;
+import Pc.Logic.Objects.Step;
 
 import javax.swing.*;
 import java.awt.*;
@@ -91,10 +92,12 @@ public class Handeling extends JFrame {
     private FileWorker fileWorker;
     private ChoreographyNaming choreographyNaming;
     private Connecting connecting;
+    private Controller controller;
 
 
-    public Handeling() {
-        this.fileWorker = new FileWorker();
+    public Handeling(FileWorker fileWorker) {
+        this.controller = new Controller();
+        this.fileWorker = fileWorker;
         indexOfActualStep = 0;
         this.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         this.setSize(new Dimension(700, 400));
@@ -266,26 +269,26 @@ public class Handeling extends JFrame {
         });
     }
     private void setSliderValues(){
-        slider1.setValue(choreography == null ? 90 : choreography.getChoreography().get(indexOfActualStep).getMove(0).getAngle());
-        slider2.setValue(choreography == null ? 90 : choreography.getChoreography().get(indexOfActualStep).getMove(1).getAngle());
-        slider3.setValue(choreography == null ? 90 : choreography.getChoreography().get(indexOfActualStep).getMove(2).getAngle());
-        slider4.setValue(choreography == null ? 90 : choreography.getChoreography().get(indexOfActualStep).getMove(3).getAngle());
-        slider5.setValue(choreography == null ? 90 : choreography.getChoreography().get(indexOfActualStep).getMove(4).getAngle());
-        slider6.setValue(choreography == null ? 90 : choreography.getChoreography().get(indexOfActualStep).getMove(5).getAngle());
+        slider1.setValue(choreography == null ? 90 : choreography.getSteps().get(indexOfActualStep).getMove(0).getAngle());
+        slider2.setValue(choreography == null ? 90 : choreography.getSteps().get(indexOfActualStep).getMove(1).getAngle());
+        slider3.setValue(choreography == null ? 90 : choreography.getSteps().get(indexOfActualStep).getMove(2).getAngle());
+        slider4.setValue(choreography == null ? 90 : choreography.getSteps().get(indexOfActualStep).getMove(3).getAngle());
+        slider5.setValue(choreography == null ? 90 : choreography.getSteps().get(indexOfActualStep).getMove(4).getAngle());
+        slider6.setValue(choreography == null ? 90 : choreography.getSteps().get(indexOfActualStep).getMove(5).getAngle());
 
-        hodnota1.setText(choreography == null ? "90" : String.valueOf(choreography.getChoreography().get(indexOfActualStep).getMove(0).getAngle()));
-        hodnota2.setText(choreography == null ? "90" : String.valueOf(choreography.getChoreography().get(indexOfActualStep).getMove(1).getAngle()));
-        hodnota3.setText(choreography == null ? "90" : String.valueOf(choreography.getChoreography().get(indexOfActualStep).getMove(2).getAngle()));
-        hodnota4.setText(choreography == null ? "90" : String.valueOf(choreography.getChoreography().get(indexOfActualStep).getMove(3).getAngle()));
-        hodnota5.setText(choreography == null ? "90" : String.valueOf(choreography.getChoreography().get(indexOfActualStep).getMove(4).getAngle()));
-        hodnota6.setText(choreography == null ? "90" : String.valueOf(choreography.getChoreography().get(indexOfActualStep).getMove(5).getAngle()));
+        hodnota1.setText(choreography == null ? "90" : String.valueOf(choreography.getSteps().get(indexOfActualStep).getMove(0).getAngle()));
+        hodnota2.setText(choreography == null ? "90" : String.valueOf(choreography.getSteps().get(indexOfActualStep).getMove(1).getAngle()));
+        hodnota3.setText(choreography == null ? "90" : String.valueOf(choreography.getSteps().get(indexOfActualStep).getMove(2).getAngle()));
+        hodnota4.setText(choreography == null ? "90" : String.valueOf(choreography.getSteps().get(indexOfActualStep).getMove(3).getAngle()));
+        hodnota5.setText(choreography == null ? "90" : String.valueOf(choreography.getSteps().get(indexOfActualStep).getMove(4).getAngle()));
+        hodnota6.setText(choreography == null ? "90" : String.valueOf(choreography.getSteps().get(indexOfActualStep).getMove(5).getAngle()));
 
     }
     private void buttonListeners(){
         bacStep.addActionListener(e -> {
             if (choreography != null && indexOfActualStep != 0) {
                 indexOfActualStep -= 1;
-                actualStep = choreography.getChoreography().get(indexOfActualStep);
+                actualStep = choreography.getSteps().get(indexOfActualStep);
                 setSliderValues();
             }
         });
@@ -298,9 +301,9 @@ public class Handeling extends JFrame {
             communicator.sendData(actualStep);
         });
         nexStep.addActionListener(e -> {
-            if (choreography != null && indexOfActualStep != choreography.getChoreography().size() - 1) {
+            if (choreography != null && indexOfActualStep != choreography.getSteps().size() - 1) {
                 indexOfActualStep += 1;
-                actualStep = choreography.getChoreography().get(indexOfActualStep);
+                actualStep = choreography.getSteps().get(indexOfActualStep);
                 setSliderValues();
             }
         });
@@ -321,7 +324,7 @@ public class Handeling extends JFrame {
         });
         forward.addActionListener(e -> {
             if (forwardFrame == null) {
-                forwardFrame = new Forward(this, communicator);
+                forwardFrame = new Forward(this, communicator, controller);
             } else {
                 forwardFrame.setVisible(true);
                 this.setVisible(false);
@@ -343,7 +346,7 @@ public class Handeling extends JFrame {
             if(choreographyTemp == null){
                 choreographyTemp = new Choreography(stepsTemp);
             }else{
-                choreographyTemp.setChoreography(stepsTemp);
+                choreographyTemp.setSteps(stepsTemp);
             }
         });
         choreographySenda.addActionListener(e -> {
