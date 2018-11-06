@@ -1,8 +1,8 @@
 package Pc.Graphics.SystemsMessages;
 
 import Pc.Graphics.Handeling;
-import Pc.Logic.Java.Services.FileWorker;
-import Pc.Logic.Java.Objects.Choreography;
+import Pc.Logic.Services.FileWorker;
+import Pc.Logic.Objects.Choreography;
 
 import javax.swing.*;
 import java.awt.*;
