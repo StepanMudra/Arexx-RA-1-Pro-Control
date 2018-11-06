@@ -1,11 +1,15 @@
-import Pc.Logic.Java.Services.Calculations.ForwardKinematics;
+package Pc.Logic.Services.Calculations;
+
 import org.junit.Test;
 
+import static junit.framework.TestCase.assertEquals;
 import static junit.framework.TestCase.assertTrue;
+import static org.junit.Assert.*;
 
 public class ForwardKinematicsTest {
+
     @Test
-    public void testForwardKinematics(){
+    public void calculateFK() {
         int[] angles =  new int[6];
         angles[0] = 0;
         angles[1] = 0;
@@ -19,24 +23,23 @@ public class ForwardKinematicsTest {
         expected[2] = 3.50;
         double[] coordinates = ForwardKinematics.calculateFK(angles);
         for (int i = 0; i < coordinates.length; i++) {
-            System.out.println(Math.round(coordinates[i]));
-            assertTrue(expected[i] == Math.round(coordinates[i]));
+            assertEquals(expected[i], coordinates[i], 0.0);
         }
 
-        angles[0] = -90;
+        angles[0] = 90;
         angles[1] = 0;
         angles[2] = 0;
         angles[3] = 0;
         angles[4] = 0;
         angles[5] = 0;
 
-        expected[0] = 0.0;
-        expected[1] = -30.5;
+        expected[0] = 0.00;
+        expected[1] = 30.5;
         expected[2] = 3.5;
 
         coordinates = ForwardKinematics.calculateFK(angles);
         for (int i = 0; i < coordinates.length; i++) {
-            assertTrue(expected[i] == Math.round(coordinates[i]));
+            assertEquals(expected[i], coordinates[i], 0.01);
         }
     }
 }

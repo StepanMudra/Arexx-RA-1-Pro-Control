@@ -1,8 +1,9 @@
-import Pc.Logic.Java.Services.FileWorker;
-import Pc.Logic.Java.Objects.Choreography;
-import Pc.Logic.Java.Objects.Servo;
-import Pc.Logic.Java.Objects.Step;
-import org.junit.*;
+package Pc.Logic.Services;
+
+import Pc.Logic.Objects.Choreography;
+import Pc.Logic.Objects.Servo;
+import Pc.Logic.Objects.Step;
+import org.junit.Test;
 
 import java.util.ArrayList;
 
@@ -11,8 +12,19 @@ import static junit.framework.TestCase.assertTrue;
 public class FileWorkerTest {
 
     @Test
-    public void testLoadChoreography(){
+    public void saveChoreography() {
+    }
 
+    @Test
+    public void loadMoznosti() {
+    }
+
+    @Test
+    public void saveMoznosti() {
+    }
+
+    @Test
+    public void loadChoreography() {
         FileWorker fileWorker = new FileWorker();
         Choreography choreography = fileWorker.loadChoreography("choreographyTest");
 
@@ -46,12 +58,12 @@ public class FileWorkerTest {
         steps.add(step3);
         Choreography choreography1 = new Choreography(steps);
 
-        assertTrue(choreography.getChoreography().size() == choreography1.getChoreography().size());
+        assertTrue(choreography.getSteps().size() == choreography1.getSteps().size());
 
-        for (int i = 0; i < choreography.getChoreography().size(); i++) {
-            for (int j = 0; j < choreography.getChoreography().get(i).getMoves().size(); j++) {
-                assertTrue(choreography.getChoreography().get(i).getMoves().get(j).getId() == choreography1.getChoreography().get(i).getMoves().get(j).getId());
-                assertTrue(choreography.getChoreography().get(i).getMoves().get(j).getAngle() == choreography1.getChoreography().get(i).getMoves().get(j).getAngle());
+        for (int i = 0; i < choreography.getSteps().size(); i++) {
+            for (int j = 0; j < choreography.getSteps().get(i).getMoves().size(); j++) {
+                assertTrue(choreography.getSteps().get(i).getMoves().get(j).getId() == choreography1.getSteps().get(i).getMoves().get(j).getId());
+                assertTrue(choreography.getSteps().get(i).getMoves().get(j).getAngle() == choreography1.getSteps().get(i).getMoves().get(j).getAngle());
             }
         }
     }
