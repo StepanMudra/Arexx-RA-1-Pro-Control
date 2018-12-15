@@ -45,11 +45,15 @@ public class ChoreographyNaming extends JFrame {
         this.setContentPane(contentPanel);
         this.setSize(new Dimension(500,130));
         this.getRootPane().setDefaultButton(buttonOK);
+        this.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
         this.fileWorker = fileWorker;
+        this.setVisible(true);
+        this.handeling = handeling;
         buttonOK.addActionListener(e -> {
             String path = "Choreography/"+textField1.getText()+".bin";
             if(new File(path).exists()) {
                 handeling.setChoreography(fileWorker.loadChoreography(textField1.getText()));
+                this.dispose();
             }else {
                 message.setText("I could not find your file.");
             }

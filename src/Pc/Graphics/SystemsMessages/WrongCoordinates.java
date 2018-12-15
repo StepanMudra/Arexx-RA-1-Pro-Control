@@ -4,12 +4,12 @@ import javax.swing.*;
 import java.awt.*;
 import java.awt.event.*;
 
-public class WrongAngle extends JDialog {
-    private JPanel contentPanel;
+public class WrongCoordinates extends JDialog {
+    private JPanel contentPane;
     private JButton buttonOK;
 
-    public WrongAngle() {
-        setContentPane(contentPanel);
+    public WrongCoordinates() {
+        setContentPane(contentPane);
         setModal(true);
         getRootPane().setDefaultButton(buttonOK);
         this.setSize(new Dimension(300, 300));
@@ -31,7 +31,7 @@ public class WrongAngle extends JDialog {
     }
 
     public static void main(String[] args) {
-        WrongAngle dialog = new WrongAngle();
+        WrongCoordinates dialog = new WrongCoordinates();
         dialog.pack();
         dialog.setVisible(true);
         System.exit(0);
