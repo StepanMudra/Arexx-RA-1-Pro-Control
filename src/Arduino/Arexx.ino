@@ -48,7 +48,7 @@ void doCommand(String cmd, int fp, int sp){
 }
 
 void loop() {
-    // parse incomming commands
+    // parse incoming commands
     while (Serial.available() > 0) {
          char c = Serial.read();
          Serial.print(c);

@@ -74,7 +74,6 @@ public class FileWorker {
             try {
                 choreography = (Choreography) in.readObject();
             } catch (ClassNotFoundException e) {
-                System.out.println("oungvriuabegiuvb");
                 e.printStackTrace();
             }
             in.close();
