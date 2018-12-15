@@ -9,10 +9,10 @@ public class CalculatePos {
         //CalculatePos calculatePos = new CalculatePos();
         //calculatePos.calculate();
         Possibilities possibilities = new Possibilities();
-        for (int i = 0; i < 180; i += 5) {
-            for (int j = 0; j < 180; j += 5) {
-                for (int k = 0; k < 180; k +=5) {
-                    for (int l = 0; l < 180; l += 5) {
+        for (int i = 0; i < 360; i += 5) {
+            for (int j = 0; j < 360; j += 5) {
+                for (int k = 0; k < 360; k +=5) {
+                    for (int l = 0; l < 360; l += 5) {
                         Possibility possibility = new Possibility();
                         possibility.setElement(0, i);
                         possibility.setElement(1, j);
@@ -42,14 +42,5 @@ public class CalculatePos {
             }
         }
         return possibilities;
-    }
-    private void upravitUhel(Possibility possibility, int index){
-        possibility.setElement(index, possibility.getElement(index)+5);
-    }
-    private void projedMoznosti(Possibilities possibilities, Possibility possibility, int index){
-        for (int i = 0; i < 180; i++) {
-            possibility.setElement(index, i);
-            possibilities.addPossibility(possibility);
-        }
     }
 }
