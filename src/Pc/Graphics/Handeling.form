@@ -60,6 +60,12 @@
                       <text value="Forward"/>
                     </properties>
                   </component>
+                  <component id="85836" class="javax.swing.JButton" binding="inverseButton" default-binding="true">
+                    <constraints/>
+                    <properties>
+                      <text value="Inverse"/>
+                    </properties>
+                  </component>
                   <component id="342fd" class="javax.swing.JRadioButton" binding="realtime">
                     <constraints/>
                     <properties>

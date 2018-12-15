@@ -14,6 +14,7 @@ import java.awt.*;
 import java.awt.event.ActionEvent;
 import java.awt.event.ActionListener;
 import java.util.ArrayList;
+import java.util.Arrays;
 
 /**
  * Created by stepanmudra on 10.07.17.
@@ -25,7 +26,7 @@ public class Handeling extends JFrame {
     private JPanel ovladaciPanel;
 
     private JButton forward;
-    private JButton inverse;
+    private JButton inverseButton;
 
     private JSlider slider1;
     private JSlider slider2;
@@ -82,6 +83,7 @@ public class Handeling extends JFrame {
     private Communicator communicator;
 
     private Forward forwardFrame;
+    private Inverse inverseFrame;
     private int indexOfActualStep;
 
     private Choreography choreography;
@@ -99,7 +101,7 @@ public class Handeling extends JFrame {
         this.controller = new Controller();
         this.fileWorker = fileWorker;
         indexOfActualStep = 0;
-        this.setDefaultCloseOperation(DISPOSE_ON_CLOSE);
+        this.setDefaultCloseOperation(EXIT_ON_CLOSE);
         this.setSize(new Dimension(700, 400));
         this.add(mainPanel);
         this.setTitle("Arexx RA1-PRO Controller");
@@ -196,7 +198,7 @@ public class Handeling extends JFrame {
         slider6.setMaximum(180);
     }
     private boolean checkSBS() {
-        System.out.println(krokove.isSelected());
+        //System.out.println(krokove.isSelected());
         return krokove.isSelected();
     }
     private boolean isPortOpened() {
@@ -269,6 +271,8 @@ public class Handeling extends JFrame {
         });
     }
     private void setSliderValues(){
+        System.out.println(indexOfActualStep);
+        System.out.println(choreography != null ? choreography.getSteps().get(indexOfActualStep).getMove(0).getId()+" "+choreography.getSteps().get(indexOfActualStep).getMove(0).getAngle() : "bla");
         slider1.setValue(choreography == null ? 90 : choreography.getSteps().get(indexOfActualStep).getMove(0).getAngle());
         slider2.setValue(choreography == null ? 90 : choreography.getSteps().get(indexOfActualStep).getMove(1).getAngle());
         slider3.setValue(choreography == null ? 90 : choreography.getSteps().get(indexOfActualStep).getMove(2).getAngle());
@@ -338,9 +342,7 @@ public class Handeling extends JFrame {
             choreography.addStep(actualStep, indexOfActualStep);
         });
         addStepToNewButton.addActionListener(e -> {
-            if(actualStep == null) {
-                actualStep = new Step();
-            }
+            actualStep = new Step();
             createStep();
             stepsTemp.add(actualStep);
             if(choreographyTemp == null){
@@ -353,6 +355,14 @@ public class Handeling extends JFrame {
             int variable = Integer.parseInt(pauseBetweenStepsMsTextField.getText());
             if(choreography != null) {
                 communicator.sendData(choreography, variable);
+            }
+        });
+        inverseButton.addActionListener(e -> {
+            if(inverseFrame == null){
+                inverseFrame = new Inverse(this, communicator, controller, fileWorker);
+            } else {
+                inverseFrame.setVisible(true);
+                this.setVisible(false);
             }
         });
     }
@@ -370,11 +380,11 @@ public class Handeling extends JFrame {
             //this.setVisible(true);
             try {
                 if(connecting == null){
-                    connecting = new Connecting();
+                    //connecting = new Connecting();
                 }
-                connecting.setVisible(true);
+                //connecting.setVisible(true);
                 portOpened = communicator.openPort(arduinoPorts.getSelectedItem().toString());
-                connecting.setVisible(false);
+                //connecting.setVisible(false);
             } catch (InterruptedException exc) {
                 exc.printStackTrace();
             }
