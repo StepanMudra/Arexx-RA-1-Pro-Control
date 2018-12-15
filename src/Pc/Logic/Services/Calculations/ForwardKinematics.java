@@ -3,6 +3,7 @@ package Pc.Logic.Services.Calculations;
 public class ForwardKinematics {
 
     public static double[] calculateFK(int[]angles){
+        //System.out.println(angles[0]+" "+angles[1]);
         double servo1Rad = Math.toRadians(angles[0]);
         double servo2Rad = Math.toRadians(angles[1]);
         double servo3Rad = Math.toRadians(angles[2]);
