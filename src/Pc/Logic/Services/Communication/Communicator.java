@@ -1,6 +1,7 @@
 package Pc.Logic.Services.Communication;
 
 import Pc.Logic.Objects.Choreography;
+import Pc.Logic.Objects.Servo;
 import Pc.Logic.Objects.Step;
 import com.fazecast.jSerialComm.SerialPort;
 
@@ -58,6 +59,16 @@ public class Communicator {
     }
 
     public void sendData(Step step){
+        for (Servo s: step.getMoves()){
+           int[] data = {s.getId(), s.getAngle()};
+            sendData(data);
+            try {
+                Thread.sleep(30);
+            } catch (InterruptedException e) {
+                e.printStackTrace();
+            }
+        }
+        /*
         for (int i = 0; i < step.getMoves().size(); i++) {
             int id = step.getMoves().get(i).getId();
             int angle = step.getMoves().get(i).getAngle();
@@ -70,13 +81,14 @@ public class Communicator {
                 e.printStackTrace();
             }
         }
+        */
     }
 
     public void sendData (int[] data) {
         PrintWriter writer = new PrintWriter(this.serialPort.getOutputStream());
 
         System.out.println("m "+data[0]+" "+data[1]);
-        System.out.println(serialPort.isOpen());
+        //System.out.println(serialPort.isOpen());
         writer.println("m "+data[0]+" "+data[1]);
         writer.flush();
     }

@@ -7,7 +7,7 @@ import static org.junit.Assert.*;
 public class ControllerTest {
 
     @Test
-    public void chceckAngles() {
+    public void checkAngles() {
         Controller controller = new Controller();
         boolean error = true;
         int[] angles = new int[6];
@@ -17,7 +17,7 @@ public class ControllerTest {
         angles[3] = 0;
         angles[4] = 0;
         angles[5] = 0;
-        error = controller.chceckAngles(null, angles, error);
+        error = controller.checkAngles(angles);
         assertFalse(error);
         angles[0] = 180;
         angles[1] = 180;
@@ -25,7 +25,7 @@ public class ControllerTest {
         angles[3] = 180;
         angles[4] = 180;
         angles[5] = 180;
-        error = controller.chceckAngles(null, angles, error);
+        error = controller.checkAngles(angles);
         assertFalse(error);
         angles[0] = 180;
         angles[1] = 180;
@@ -33,7 +33,7 @@ public class ControllerTest {
         angles[3] = 180;
         angles[4] = 180;
         angles[5] = 181;
-        error = controller.chceckAngles(null, angles, error);
+        error = controller.checkAngles(angles);
         assertTrue(error);
         angles[0] = 0;
         angles[1] = 0;
@@ -41,7 +41,7 @@ public class ControllerTest {
         angles[3] = 0;
         angles[4] = 0;
         angles[5] = -1;
-        error = controller.chceckAngles(null, angles, error);
+        error = controller.checkAngles(angles);
         assertTrue(error);
     }
 

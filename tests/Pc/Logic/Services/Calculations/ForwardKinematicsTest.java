@@ -23,19 +23,19 @@ public class ForwardKinematicsTest {
         expected[2] = 3.50;
         double[] coordinates = ForwardKinematics.calculateFK(angles);
         for (int i = 0; i < coordinates.length; i++) {
-            assertEquals(expected[i], coordinates[i], 0.0);
+            assertEquals(expected[i], coordinates[i], 0.01);
         }
 
-        angles[0] = 90;
-        angles[1] = 0;
+        angles[0] = 0;
+        angles[1] = 270;
         angles[2] = 0;
         angles[3] = 0;
         angles[4] = 0;
         angles[5] = 0;
 
-        expected[0] = 0.00;
-        expected[1] = 30.5;
-        expected[2] = 3.5;
+        expected[0] = 0;
+        expected[1] = 0.0;
+        expected[2] = 34;
 
         coordinates = ForwardKinematics.calculateFK(angles);
         for (int i = 0; i < coordinates.length; i++) {
