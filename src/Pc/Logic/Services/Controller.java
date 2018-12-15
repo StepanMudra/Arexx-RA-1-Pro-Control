@@ -4,11 +4,10 @@ import Pc.Graphics.Forward;
 import Pc.Graphics.SystemsMessages.OutOfWorkSpace;
 import Pc.Graphics.SystemsMessages.WrongAngle;
 import Pc.Logic.Objects.Possibility;
-import org.apache.commons.math3.ode.JacobianMatrices;
 
 public class Controller {
 
-    public boolean chceckAngles(WrongAngle wrongAngle, int[] angles, boolean err) {
+    public boolean checkAngles(int[] angles) {
         for (int i = 0; i <= 5 ; i++) {
             if (0>angles[i]||angles[i]>180) {
                 return true;
@@ -41,6 +40,11 @@ public class Controller {
         return true;
     }
 
-    public void singularityControl(Possibility possibility){
+    public boolean nullValuesControl(String servo1, String servo2, String servo3, String servo4, String servo5, String servo6) {
+        if(servo1 == null || servo2 == null || servo3 == null || servo4 == null || servo5 == null || servo6 == null){
+            return true;
+        }else {
+            return false;
+        }
     }
 }
